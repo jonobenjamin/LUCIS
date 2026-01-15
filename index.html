@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUCIS Web Application</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .theme-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-custom {
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .file-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background-color: #f0f2ff;
+        }
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background-color: #f0f2ff;
+        }
+        .progress {
+            height: 25px;
+            border-radius: 15px;
+        }
+        .selected-files {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .file-item {
+            background: #e9ecef;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 4px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .theme-section {
+            display: none;
+        }
+        .theme-section.active {
+            display: block;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #dee2e6;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        .step.active {
+            background: #667eea;
+            color: white;
+        }
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1><i class="fas fa-map-marked-alt"></i> LUCIS Web Application</h1>
+                    <p class="lead">Land Use Conflict Identification Strategy</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Setup Instructions -->
+        <div id="setup-section" class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">
+                    <i class="fas fa-cogs"></i> Initial Setup Instructions
+                </h2>
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle"></i> Important Setup Steps:</h5>
+                    <ol>
+                        <li><strong>Download LUCIS Folder:</strong> Download the complete LUCIS folder and place it in a location where it will stay permanently.</li>
+                        <li><strong>Prepare Data Folder:</strong> Copy and paste all your shapefile data into the <code>Data</code> folder within the LUCIS directory.</li>
+                        <li><strong>Rename Study Site:</strong> Change the "Study Site Name" folder to match the exact name of the area you are working with.</li>
+                        <li><strong>Add Planning Extent:</strong> Place your planning extent shapefile into the newly renamed study site folder.</li>
+                    </ol>
+                </div>
+                <div class="text-center">
+                    <button id="skip-setup" class="btn btn-success btn-custom btn-lg">
+                        <i class="fas fa-forward"></i> Skip Setup (Already Done)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step active" id="step-1">1</div>
+            <div class="step" id="step-2">2</div>
+            <div class="step" id="step-3">3</div>
+            <div class="step" id="step-4">4</div>
+            <div class="step" id="step-5">5</div>
+            <div class="step" id="step-6">6</div>
+        </div>
+
+        <!-- Study Area Configuration -->
+        <div id="config-section" class="card theme-section active">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">
+                    <i class="fas fa-map"></i> Study Area Configuration
+                </h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="study-area-name" class="form-label">Study Area Name</label>
+                            <input type="text" class="form-control" id="study-area-name" placeholder="Enter your study area name">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="excel-file" class="form-label">Upload Data.xlsx</label>
+                            <input type="file" class="form-control" id="excel-file" accept=".xlsx,.xls">
+                            <div class="form-text">
+                                <button id="download-sample-excel" class="btn btn-link btn-sm p-0">
+                                    <i class="fas fa-download"></i> Download sample Data.xlsx template
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button id="next-to-agriculture" class="btn btn-primary btn-custom">
+                        <i class="fas fa-arrow-right"></i> Next: Agriculture Themes
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agriculture Theme Selection -->
+        <div id="agriculture-section" class="card theme-section">
+            <div class="card-body theme-card">
+                <h3 class="card-title text-center mb-4">
+                    <i class="fas fa-tractor"></i> Agriculture Suitability Themes
+                </h3>
+
+                <!-- AG01: Plowing Fields -->
+                <div class="card mb-4" style="background: rgba(255,255,255,0.1);">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-seedling"></i> AG01: Plowing Fields (Agriculture Suitability)
+                        </h5>
+                        <p class="card-text">Select all data sources applicable for plowing fields suitability mapping.</p>
+                        <div class="file-upload-area" id="ag01-upload">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                            <p>Drag and drop shapefiles here or click to browse</p>
+                            <input type="file" multiple accept=".shp,.dbf,.shx,.prj,.cpg,.sbn,.sbx,.fbn,.fbx,.ain,.aih,.ixs,.mxs,.atx,.shp.xml,.lyr" style="display: none;">
+                        </div>
+                        <div class="selected-files mt-3" id="ag01-files"></div>
+                    </div>
+                </div>
+
+                <div class="text-center mb-4">
+                    <button id="next-to-ag02" class="btn btn-light btn-custom">
+                        <i class="fas fa-arrow-right"></i> Next: Livestock (AG02)
+                    </button>
+                    <button id="skip-ag01" class="btn btn-outline-light btn-custom ms-2">
+                        <i class="fas fa-times"></i> Skip AG01
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AG02: Livestock -->
+        <div id="ag02-section" class="card theme-section">
+            <div class="card-body theme-card">
+                <h3 class="card-title text-center mb-4">
+                    <i class="fas fa-cow"></i> AG02: Livestock Suitability
+                </h3>
+                <div class="card mb-4" style="background: rgba(255,255,255,0.1);">
+                    <div class="card-body">
+                        <p class="card-text">Select all data sources applicable for livestock suitability mapping.</p>
+                        <div class="file-upload-area" id="ag02-upload">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                            <p>Drag and drop shapefiles here or click to browse</p>
+                            <input type="file" multiple accept=".shp,.dbf,.shx,.prj,.cpg,.sbn,.sbx,.fbn,.fbx,.ain,.aih,.ixs,.mxs,.atx,.shp.xml,.lyr" style="display: none;">
+                        </div>
+                        <div class="selected-files mt-3" id="ag02-files"></div>
+                    </div>
+                </div>
+                <div class="text-center mb-4">
+                    <button id="next-to-ag03" class="btn btn-light btn-custom">
+                        <i class="fas fa-arrow-right"></i> Next: Gardens (AG03)
+                    </button>
+                    <button id="skip-ag02" class="btn btn-outline-light btn-custom ms-2">
+                        <i class="fas fa-times"></i> Skip AG02
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AG03: Gardens -->
+        <div id="ag03-section" class="card theme-section">
+            <div class="card-body theme-card">
+                <h3 class="card-title text-center mb-4">
+                    <i class="fas fa-leaf"></i> AG03: Gardens Suitability
+                </h3>
+                <div class="card mb-4" style="background: rgba(255,255,255,0.1);">
+                    <div class="card-body">
+                        <p class="card-text">Select all data sources applicable for gardens suitability mapping.</p>
+                        <div class="file-upload-area" id="ag03-upload">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                            <p>Drag and drop shapefiles here or click to browse</p>
+                            <input type="file" multiple accept=".shp,.dbf,.shx,.prj,.cpg,.sbn,.sbx,.fbn,.fbx,.ain,.aih,.ixs,.mxs,.atx,.shp.xml,.lyr" style="display: none;">
+                        </div>
+                        <div class="selected-files mt-3" id="ag03-files"></div>
+                    </div>
+                </div>
+                <div class="text-center mb-4">
+                    <button id="next-to-conservation" class="btn btn-success btn-custom">
+                        <i class="fas fa-arrow-right"></i> Next: Conservation (CG01)
+                    </button>
+                    <button id="skip-ag03" class="btn btn-outline-success btn-custom ms-2">
+                        <i class="fas fa-times"></i> Skip AG03
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conservation Theme Selection -->
+        <div id="conservation-section" class="card theme-section">
+            <div class="card-body" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
+                <h3 class="card-title text-center mb-4">
+                    <i class="fas fa-tree"></i> Conservation Theme
+                </h3>
+                <div class="card mb-4" style="background: rgba(255,255,255,0.1);">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-shield-alt"></i> CG01: Conservation Suitability
+                        </h5>
+                        <p class="card-text">Select all data sources applicable for conservation suitability mapping.</p>
+                        <div class="file-upload-area" id="cg01-upload">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                            <p>Drag and drop shapefiles here or click to browse</p>
+                            <input type="file" multiple accept=".shp,.dbf,.shx,.prj,.cpg,.sbn,.sbx,.fbn,.fbx,.ain,.aih,.ixs,.mxs,.atx,.shp.xml,.lyr" style="display: none;">
+                        </div>
+                        <div class="selected-files mt-3" id="cg01-files"></div>
+                    </div>
+                </div>
+                <div class="text-center mb-4">
+                    <button id="next-to-urban" class="btn btn-light btn-custom">
+                        <i class="fas fa-arrow-right"></i> Next: Urban (UG01)
+                    </button>
+                    <button id="skip-cg01" class="btn btn-outline-light btn-custom ms-2">
+                        <i class="fas fa-times"></i> Skip CG01
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Urban Theme Selection -->
+        <div id="urban-section" class="card theme-section">
+            <div class="card-body" style="background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%); color: white;">
+                <h3 class="card-title text-center mb-4">
+                    <i class="fas fa-city"></i> Urban Theme
+                </h3>
+                <div class="card mb-4" style="background: rgba(255,255,255,0.1);">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-building"></i> UG01: Urban Suitability
+                        </h5>
+                        <p class="card-text">Select all data sources applicable for urban suitability mapping.</p>
+                        <div class="file-upload-area" id="ug01-upload">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                            <p>Drag and drop shapefiles here or click to browse</p>
+                            <input type="file" multiple accept=".shp,.dbf,.shx,.prj,.cpg,.sbn,.sbx,.fbn,.fbx,.ain,.aih,.ixs,.mxs,.atx,.shp.xml,.lyr" style="display: none;">
+                        </div>
+                        <div class="selected-files mt-3" id="ug01-files"></div>
+                    </div>
+                </div>
+                <div class="text-center mb-4">
+                    <button id="process-data" class="btn btn-warning btn-custom">
+                        <i class="fas fa-play"></i> Process Data & Generate Results
+                    </button>
+                    <button id="skip-ug01" class="btn btn-outline-warning btn-custom ms-2">
+                        <i class="fas fa-times"></i> Skip UG01
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Processing Status -->
+        <div id="processing-section" class="card theme-section">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">
+                    <i class="fas fa-cog fa-spin"></i> Processing Data
+                </h3>
+                <div class="progress mb-3">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" id="processing-progress" style="width: 0%"></div>
+                </div>
+                <div id="processing-status" class="text-center"></div>
+                <div class="text-center mt-4">
+                    <button id="download-results" class="btn btn-success btn-custom" style="display: none;">
+                        <i class="fas fa-download"></i> Download Results
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.22.1/full/pyodide.js"></script>
+
+    <script>
+        // Global variables
+        let currentStep = 1;
+        let studyAreaName = '';
+        let excelData = null;
+        let selectedFiles = {
+            AG01: [],
+            AG02: [],
+            AG03: [],
+            CG01: [],
+            UG01: []
+        };
+
+        // Initialize Pyodide
+        let pyodide = null;
+        async function initPyodide() {
+            pyodide = await loadPyodide({
+                indexURL: "https://cdn.jsdelivr.net/pyodide/v0.22.1/full/"
+            });
+
+            // Load required packages
+            await pyodide.loadPackage(['pandas', 'numpy', 'geopandas', 'rasterio', 'scipy', 'matplotlib']);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initPyodide();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Skip setup button
+            document.getElementById('skip-setup').addEventListener('click', function() {
+                document.getElementById('setup-section').style.display = 'none';
+                document.getElementById('config-section').classList.add('active');
+                updateStepIndicator(1);
+            });
+
+            // Download sample Excel template
+            document.getElementById('download-sample-excel').addEventListener('click', downloadSampleExcel);
+
+            // Navigation buttons
+            document.getElementById('next-to-agriculture').addEventListener('click', function() {
+                studyAreaName = document.getElementById('study-area-name').value.trim();
+                if (!studyAreaName) {
+                    alert('Please enter a study area name.');
+                    return;
+                }
+                navigateToSection('config-section', 'agriculture-section', 2);
+            });
+
+            document.getElementById('next-to-ag02').addEventListener('click', () => navigateToSection('agriculture-section', 'ag02-section', 3));
+            document.getElementById('next-to-ag03').addEventListener('click', () => navigateToSection('ag02-section', 'ag03-section', 4));
+            document.getElementById('next-to-conservation').addEventListener('click', () => navigateToSection('ag03-section', 'conservation-section', 5));
+            document.getElementById('next-to-urban').addEventListener('click', () => navigateToSection('conservation-section', 'urban-section', 6));
+
+            // Skip buttons
+            document.querySelectorAll('[id^="skip-"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const theme = this.id.replace('skip-', '').toUpperCase();
+                    if (theme === 'AG01') navigateToSection('agriculture-section', 'ag02-section', 3);
+                    else if (theme === 'AG02') navigateToSection('ag02-section', 'ag03-section', 4);
+                    else if (theme === 'AG03') navigateToSection('ag03-section', 'conservation-section', 5);
+                    else if (theme === 'CG01') navigateToSection('conservation-section', 'urban-section', 6);
+                    else if (theme === 'UG01') {
+                        navigateToSection('urban-section', 'processing-section', 6);
+                        startProcessing();
+                    }
+                });
+            });
+
+            // Excel file upload
+            document.getElementById('excel-file').addEventListener('change', handleExcelUpload);
+
+            // File upload areas
+            setupFileUpload('ag01-upload', 'AG01');
+            setupFileUpload('ag02-upload', 'AG02');
+            setupFileUpload('ag03-upload', 'AG03');
+            setupFileUpload('cg01-upload', 'CG01');
+            setupFileUpload('ug01-upload', 'UG01');
+
+            // Process data button
+            document.getElementById('process-data').addEventListener('click', function() {
+                navigateToSection('urban-section', 'processing-section', 6);
+                startProcessing();
+            });
+        }
+
+        function navigateToSection(fromSection, toSection, step) {
+            document.getElementById(fromSection).classList.remove('active');
+            document.getElementById(toSection).classList.add('active');
+            updateStepIndicator(step);
+        }
+
+        function updateStepIndicator(activeStep) {
+            for (let i = 1; i <= 6; i++) {
+                const stepEl = document.getElementById(`step-${i}`);
+                stepEl.classList.remove('active', 'completed');
+                if (i < activeStep) {
+                    stepEl.classList.add('completed');
+                } else if (i === activeStep) {
+                    stepEl.classList.add('active');
+                }
+            }
+            currentStep = activeStep;
+        }
+
+        function handleExcelUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                excelData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                console.log('Excel data loaded:', excelData);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function setupFileUpload(uploadAreaId, theme) {
+            const uploadArea = document.getElementById(uploadAreaId);
+            const fileInput = uploadArea.querySelector('input[type="file"]');
+            const filesContainer = document.getElementById(`${theme.toLowerCase()}-files`);
+
+            // Click to browse
+            uploadArea.addEventListener('click', () => fileInput.click());
+
+            // File input change
+            fileInput.addEventListener('change', (e) => handleFileSelection(e.target.files, theme, filesContainer));
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                handleFileSelection(e.dataTransfer.files, theme, filesContainer);
+            });
+        }
+
+        function handleFileSelection(files, theme, container) {
+            selectedFiles[theme] = Array.from(files);
+            updateFileDisplay(theme, container);
+        }
+
+        function updateFileDisplay(theme, container) {
+            container.innerHTML = '';
+            selectedFiles[theme].forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <span><i class="fas fa-file"></i> ${file.name}</span>
+                    <button class="btn btn-sm btn-outline-danger" onclick="removeFile('${theme}', ${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                container.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(theme, index) {
+            selectedFiles[theme].splice(index, 1);
+            const container = document.getElementById(`${theme.toLowerCase()}-files`);
+            updateFileDisplay(theme, container);
+        }
+
+        async function startProcessing() {
+            if (!excelData) {
+                alert('Please upload the Data.xlsx file first.');
+                return;
+            }
+
+            const progressBar = document.getElementById('processing-progress');
+            const statusDiv = document.getElementById('processing-status');
+
+            try {
+                // Update progress
+                progressBar.style.width = '20%';
+                statusDiv.innerHTML = '<p>Initializing Python environment...</p>';
+
+                // Wait for Pyodide to be ready
+                if (!pyodide) {
+                    await initPyodide();
+                }
+
+                progressBar.style.width = '40%';
+                statusDiv.innerHTML = '<p>Updating Excel data...</p>';
+
+                // Update Excel data with selected files
+                await updateExcelData();
+
+                progressBar.style.width = '60%';
+                statusDiv.innerHTML = '<p>Running LUCIS processing...</p>';
+
+                // Run the Python processing code
+                await runLUCISProcessing();
+
+                progressBar.style.width = '100%';
+                statusDiv.innerHTML = '<p class="text-success"><i class="fas fa-check"></i> Processing complete!</p>';
+
+                // Show download button
+                document.getElementById('download-results').style.display = 'inline-block';
+
+            } catch (error) {
+                console.error('Processing error:', error);
+                statusDiv.innerHTML = `<p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Error: ${error.message}</p>`;
+                progressBar.style.width = '0%';
+                progressBar.classList.add('bg-danger');
+            }
+        }
+
+        async function updateExcelData() {
+            // Find header row
+            let headerRowIndex = -1;
+            for (let i = 0; i < excelData.length; i++) {
+                if (excelData[i].includes('Area') && excelData[i].includes('Folder') && excelData[i].includes('Fname')) {
+                    headerRowIndex = i;
+                    break;
+                }
+            }
+
+            if (headerRowIndex === -1) {
+                throw new Error('Could not find header row in Excel file');
+            }
+
+            const headers = excelData[headerRowIndex];
+            const areaIndex = headers.indexOf('Area');
+            const folderIndex = headers.indexOf('Folder');
+            const fnameIndex = headers.indexOf('Fname');
+            const outputFnameIndex = headers.indexOf('Output Fname');
+            const suitModIndex = headers.indexOf('SuitMod');
+
+            if (areaIndex === -1 || folderIndex === -1 || fnameIndex === -1 || outputFnameIndex === -1 || suitModIndex === -1) {
+                throw new Error('Required columns not found in Excel file');
+            }
+
+            // Clear existing data rows (keep header)
+            excelData.splice(headerRowIndex + 1);
+
+            // Add new data rows for each theme
+            const themes = [
+                { code: 'AG01', subtheme: '_Fld', files: selectedFiles.AG01 },
+                { code: 'AG02', subtheme: '_Livestock', files: selectedFiles.AG02 },
+                { code: 'AG03', subtheme: '_Garden', files: selectedFiles.AG03 },
+                { code: 'CG01', subtheme: '', files: selectedFiles.CG01 },
+                { code: 'UG01', subtheme: '', files: selectedFiles.UG01 }
+            ];
+
+            themes.forEach(theme => {
+                theme.files.forEach(file => {
+                    const fileName = file.name.replace('.shp', '');
+                    const outputFname = `AG${theme.subtheme}_${fileName}`;
+
+                    const newRow = new Array(headers.length).fill('');
+                    newRow[areaIndex] = studyAreaName;
+                    newRow[folderIndex] = 'Data';
+                    newRow[fnameIndex] = fileName;
+                    newRow[outputFnameIndex] = outputFname;
+                    newRow[suitModIndex] = theme.code;
+
+                    excelData.push(newRow);
+                });
+            });
+        }
+
+        async function runLUCISProcessing() {
+            // Note: Full geospatial processing requires local execution
+            // This function prepares the data and provides instructions
+
+            try {
+                // Load the updated Excel data into Python
+                const excelContent = XLSX.utils.sheet_to_csv(XLSX.utils.aoa_to_sheet(excelData));
+                pyodide.runPython(`
+import pandas as pd
+import io
+
+# Load the updated Excel data
+excel_string = """${excelContent.replace(/"/g, '""')}"""
+df = pd.read_csv(io.StringIO(excel_string))
+print("Data prepared for processing:")
+print(df.head())
+print(f"Total rows: {len(df)}")
+print(f"Unique SuitMod values: {df['SuitMod'].unique()}")
+                `);
+
+                // Provide processing instructions
+                const statusDiv = document.getElementById('processing-status');
+                statusDiv.innerHTML += `
+                    <div class="alert alert-info mt-3">
+                        <h6><i class="fas fa-info-circle"></i> Processing Instructions</h6>
+                        <p>The Excel file has been updated with your selected data sources. To complete the LUCIS analysis:</p>
+                        <ol>
+                            <li>Download the updated Data.xlsx file</li>
+                            <li>Replace your original Data.xlsx with the updated version</li>
+                            <li>Run the LUCIS Python notebook locally in your environment</li>
+                            <li>The notebook will process all the selected shapefiles and generate the final LUCIS outputs</li>
+                        </ol>
+                    </div>
+                `;
+
+                console.log('LUCIS data preparation complete');
+
+            } catch (error) {
+                console.error('Python processing error:', error);
+                throw new Error('Failed to prepare data for processing: ' + error.message);
+            }
+        }
+
+        function downloadSampleExcel() {
+            // Create sample Excel template
+            const sampleData = [
+                ['Area', 'Folder', 'Fname', 'Output Fname', 'SuitMod', 'Distance/Attribute', 'Attribute', 'Invert', 'Rank 6', 'Rank 5', 'Rank 4', 'Rank 3', 'Rank 2', 'Rank 1', 'Weights', 'No Data Rank'],
+                ['Sample Area', 'Data', 'roads', 'AG_Fld_roads', 'AG01', 'Dis', '', 'no', 5000, 3000, 1000, 500, 100, 0, 1.0, 1],
+                ['Sample Area', 'Data', 'soil_suitability', 'AG_Fld_soil_suitability', 'AG01', 'Att', 'suit_class', 'no', 'High', 'Medium-High', 'Medium', 'Medium-Low', 'Low', 'Very Low', 1.0, 1],
+                ['Sample Area', 'Data', 'water_bodies', 'AG_Fld_water_bodies', 'AG01', 'Dis', '', 'yes', 2000, 1000, 500, 200, 50, 0, 0.8, 1],
+                ['Sample Area', 'Data', 'slope', 'AG_Fld_slope', 'AG01', 'Att', 'slope_deg', 'yes', 60, 45, 30, 20, 10, 0, 0.9, 1],
+                ['Sample Area', 'Data', 'protected_areas', 'CG_protected_areas', 'CG01', 'Dis', '', 'no', 10000, 5000, 2000, 1000, 500, 0, 1.0, 1],
+                ['Sample Area', 'Data', 'biodiversity_hotspots', 'CG_biodiversity_hotspots', 'CG01', 'Att', 'priority', 'no', 'Very High', 'High', 'Medium', 'Low', 'Very Low', 'None', 0.8, 1],
+                ['Sample Area', 'Data', 'urban_zones', 'UG_urban_zones', 'UG01', 'Dis', '', 'no', 1000, 500, 200, 100, 50, 0, 1.0, 1],
+                ['Sample Area', 'Data', 'infrastructure', 'UG_infrastructure', 'UG01', 'Dis', '', 'no', 2000, 1000, 500, 200, 50, 0, 0.7, 1]
+            ];
+
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(sampleData);
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+            XLSX.writeFile(workbook, 'Sample_Data.xlsx');
+        }
+
+        // Download results function (placeholder)
+        document.getElementById('download-results').addEventListener('click', function() {
+            if (excelData) {
+                const workbook = XLSX.utils.book_new();
+                const worksheet = XLSX.utils.aoa_to_sheet(excelData);
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+                XLSX.writeFile(workbook, 'Updated_Data.xlsx');
+            }
+        });
+    </script>
+</body>
+</html>
