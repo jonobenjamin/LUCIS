@@ -210,6 +210,9 @@
                     </div>
                 </div>
                 <div class="text-center">
+                    <button id="download-template" class="btn btn-secondary btn-custom me-2">
+                        <i class="fas fa-download"></i> Download Template
+                    </button>
                     <button id="next-to-agriculture" class="btn btn-primary btn-custom">
                         <i class="fas fa-arrow-right"></i> Next: Agriculture Themes
                     </button>
@@ -389,6 +392,9 @@
                     </div>
                 </div>
                 <div class="text-center mb-4">
+                    <button id="download-excel" class="btn btn-info btn-custom me-2">
+                        <i class="fas fa-download"></i> Download Data.xlsx
+                    </button>
                     <button id="process-data" class="btn btn-warning btn-custom">
                         <i class="fas fa-play"></i> Process Data & Generate Results
                     </button>
@@ -410,8 +416,8 @@
                 </div>
                 <div id="processing-status" class="text-center"></div>
                 <div class="text-center mt-4">
-                    <button id="download-results" class="btn btn-success btn-custom" style="display: none;">
-                        <i class="fas fa-download"></i> Download Results
+                    <button id="download-results" class="btn btn-success btn-custom btn-lg">
+                        <i class="fas fa-download"></i> Download Updated Data.xlsx
                     </button>
                 </div>
             </div>
@@ -470,6 +476,9 @@
 
             document.getElementById('directory-picker').addEventListener('change', handleDirectorySelection);
 
+            // Download template button
+            document.getElementById('download-template').addEventListener('click', downloadSampleExcel);
+
             // Next to config
             document.getElementById('next-to-config').addEventListener('click', function() {
                 if (!selectedDirectory) {
@@ -516,6 +525,23 @@
             document.getElementById('excel-file').addEventListener('change', handleExcelUpload);
 
             // File selection is now handled through directory picker
+
+            // Download Excel button
+            document.getElementById('download-excel').addEventListener('click', function() {
+                if (!excelData) {
+                    alert('Please upload a Data.xlsx file first.');
+                    return;
+                }
+                // Update the Excel data with current selections before downloading
+                updateExcelData().then(() => {
+                    const workbook = XLSX.utils.book_new();
+                    const worksheet = XLSX.utils.aoa_to_sheet(excelData);
+                    XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+                    XLSX.writeFile(workbook, 'Updated_Data.xlsx');
+                }).catch(error => {
+                    alert('Error updating Excel file: ' + error.message);
+                });
+            });
 
             // Process data button
             document.getElementById('process-data').addEventListener('click', function() {
@@ -736,12 +762,15 @@ print(f"Unique SuitMod values: {df['SuitMod'].unique()}")
                 // Provide processing instructions
                 const statusDiv = document.getElementById('processing-status');
                 statusDiv.innerHTML += `
+                    <div class="alert alert-success mt-3">
+                        <h5><i class="fas fa-check-circle"></i> Excel File Updated Successfully!</h5>
+                        <p>Your Data.xlsx has been updated with all your selected data sources.</p>
+                    </div>
                     <div class="alert alert-info mt-3">
-                        <h6><i class="fas fa-info-circle"></i> Processing Instructions</h6>
-                        <p>The Excel file has been updated with your selected data sources. To complete the LUCIS analysis:</p>
+                        <h6><i class="fas fa-info-circle"></i> Next Steps:</h6>
                         <ol>
-                            <li>Download the updated Data.xlsx file</li>
-                            <li>Replace your original Data.xlsx with the updated version</li>
+                            <li><strong>Click the download button below</strong> to save your updated Data.xlsx</li>
+                            <li>Replace your original Data.xlsx with the downloaded version</li>
                             <li>Run the LUCIS Python notebook locally in your environment</li>
                             <li>The notebook will process all the selected shapefiles and generate the final LUCIS outputs</li>
                         </ol>
