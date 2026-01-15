@@ -121,20 +121,53 @@
         <div id="setup-section" class="card">
             <div class="card-body">
                 <h2 class="card-title text-center mb-4">
-                    <i class="fas fa-cogs"></i> Initial Setup Instructions
+                    <i class="fas fa-download"></i> Download & Setup LUCIS Folder
                 </h2>
                 <div class="alert alert-info">
-                    <h5><i class="fas fa-info-circle"></i> Important Setup Steps:</h5>
+                    <h5><i class="fas fa-info-circle"></i> Setup Instructions:</h5>
                     <ol>
-                        <li><strong>Download LUCIS Folder:</strong> Download the complete LUCIS folder and place it in a location where it will stay permanently.</li>
-                        <li><strong>Prepare Data Folder:</strong> Copy and paste all your shapefile data into the <code>Data</code> folder within the LUCIS directory.</li>
-                        <li><strong>Rename Study Site:</strong> Change the "Study Site Name" folder to match the exact name of the area you are working with.</li>
-                        <li><strong>Add Planning Extent:</strong> Place your planning extent shapefile into the newly renamed study site folder.</li>
+                        <li><strong>Download LUCIS Folder:</strong> Download the complete LUCIS folder and all items contained within it.</li>
+                        <li><strong>Place Locally:</strong> Place the LUCIS folder in a permanent location on your local machine where this project will live.</li>
                     </ol>
+                    <div class="alert alert-warning mt-3">
+                        <strong>Important:</strong> Remember the exact location of your LUCIS folder - you'll need to select it in the next step.
+                    </div>
                 </div>
                 <div class="text-center">
                     <button id="skip-setup" class="btn btn-success btn-custom btn-lg">
                         <i class="fas fa-forward"></i> Skip Setup (Already Done)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Directory Selection -->
+        <div id="directory-section" class="card theme-section">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">
+                    <i class="fas fa-folder-open"></i> Select Your LUCIS Directory
+                </h3>
+                <div class="alert alert-info">
+                    <p>Select the directory where you placed your LUCIS folder. The application will automatically navigate to the <code>Data</code> subfolder to load your shapefiles.</p>
+                </div>
+                <div class="text-center mb-4">
+                    <input type="file" id="directory-picker" webkitdirectory directory style="display: none;">
+                    <button id="select-directory-btn" class="btn btn-primary btn-custom btn-lg">
+                        <i class="fas fa-folder"></i> Select LUCIS Directory
+                    </button>
+                </div>
+                <div id="selected-directory-display" class="alert alert-success" style="display: none;">
+                    <i class="fas fa-check"></i> <strong>Selected Directory:</strong> <span id="directory-path"></span>
+                </div>
+                <div id="directory-files" class="mt-4" style="display: none;">
+                    <h5><i class="fas fa-file"></i> Files Found in Data Folder:</h5>
+                    <div class="selected-files">
+                        <div id="data-files-list"></div>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button id="next-to-config" class="btn btn-success btn-custom">
+                        <i class="fas fa-arrow-right"></i> Next: Load Configuration
                     </button>
                 </div>
             </div>
@@ -148,6 +181,7 @@
             <div class="step" id="step-4">4</div>
             <div class="step" id="step-5">5</div>
             <div class="step" id="step-6">6</div>
+            <div class="step" id="step-7">7</div>
         </div>
 
         <!-- Study Area Configuration -->
@@ -197,10 +231,16 @@
                             <i class="fas fa-seedling"></i> AG01: Plowing Fields (Agriculture Suitability)
                         </h5>
                         <p class="card-text">Select all data sources applicable for plowing fields suitability mapping.</p>
-                        <div class="file-upload-area" id="ag01-upload">
-                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
-                            <p>Drag and drop shapefiles here or click to browse</p>
-                            <input type="file" multiple accept=".shp,.dbf,.shx,.prj,.cpg,.sbn,.sbx,.fbn,.fbx,.ain,.aih,.ixs,.mxs,.atx,.shp.xml,.lyr" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label">Available Shapefiles:</label>
+                            <select class="form-select" id="ag01-file-select" multiple size="6">
+                                <option disabled>No files loaded yet</option>
+                            </select>
+                        </div>
+                        <div class="text-center mb-3">
+                            <button class="btn btn-outline-light btn-sm" onclick="addSelectedFiles('AG01')">
+                                <i class="fas fa-plus"></i> Add Selected Files
+                            </button>
                         </div>
                         <div class="selected-files mt-3" id="ag01-files"></div>
                     </div>
@@ -226,10 +266,16 @@
                 <div class="card mb-4" style="background: rgba(255,255,255,0.1);">
                     <div class="card-body">
                         <p class="card-text">Select all data sources applicable for livestock suitability mapping.</p>
-                        <div class="file-upload-area" id="ag02-upload">
-                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
-                            <p>Drag and drop shapefiles here or click to browse</p>
-                            <input type="file" multiple accept=".shp,.dbf,.shx,.prj,.cpg,.sbn,.sbx,.fbn,.fbx,.ain,.aih,.ixs,.mxs,.atx,.shp.xml,.lyr" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label">Available Shapefiles:</label>
+                            <select class="form-select" id="ag02-file-select" multiple size="6">
+                                <option disabled>No files loaded yet</option>
+                            </select>
+                        </div>
+                        <div class="text-center mb-3">
+                            <button class="btn btn-outline-light btn-sm" onclick="addSelectedFiles('AG02')">
+                                <i class="fas fa-plus"></i> Add Selected Files
+                            </button>
                         </div>
                         <div class="selected-files mt-3" id="ag02-files"></div>
                     </div>
@@ -254,10 +300,16 @@
                 <div class="card mb-4" style="background: rgba(255,255,255,0.1);">
                     <div class="card-body">
                         <p class="card-text">Select all data sources applicable for gardens suitability mapping.</p>
-                        <div class="file-upload-area" id="ag03-upload">
-                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
-                            <p>Drag and drop shapefiles here or click to browse</p>
-                            <input type="file" multiple accept=".shp,.dbf,.shx,.prj,.cpg,.sbn,.sbx,.fbn,.fbx,.ain,.aih,.ixs,.mxs,.atx,.shp.xml,.lyr" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label">Available Shapefiles:</label>
+                            <select class="form-select" id="ag03-file-select" multiple size="6">
+                                <option disabled>No files loaded yet</option>
+                            </select>
+                        </div>
+                        <div class="text-center mb-3">
+                            <button class="btn btn-outline-light btn-sm" onclick="addSelectedFiles('AG03')">
+                                <i class="fas fa-plus"></i> Add Selected Files
+                            </button>
                         </div>
                         <div class="selected-files mt-3" id="ag03-files"></div>
                     </div>
@@ -285,10 +337,16 @@
                             <i class="fas fa-shield-alt"></i> CG01: Conservation Suitability
                         </h5>
                         <p class="card-text">Select all data sources applicable for conservation suitability mapping.</p>
-                        <div class="file-upload-area" id="cg01-upload">
-                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
-                            <p>Drag and drop shapefiles here or click to browse</p>
-                            <input type="file" multiple accept=".shp,.dbf,.shx,.prj,.cpg,.sbn,.sbx,.fbn,.fbx,.ain,.aih,.ixs,.mxs,.atx,.shp.xml,.lyr" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label">Available Shapefiles:</label>
+                            <select class="form-select" id="cg01-file-select" multiple size="6">
+                                <option disabled>No files loaded yet</option>
+                            </select>
+                        </div>
+                        <div class="text-center mb-3">
+                            <button class="btn btn-outline-light btn-sm" onclick="addSelectedFiles('CG01')">
+                                <i class="fas fa-plus"></i> Add Selected Files
+                            </button>
                         </div>
                         <div class="selected-files mt-3" id="cg01-files"></div>
                     </div>
@@ -316,10 +374,16 @@
                             <i class="fas fa-building"></i> UG01: Urban Suitability
                         </h5>
                         <p class="card-text">Select all data sources applicable for urban suitability mapping.</p>
-                        <div class="file-upload-area" id="ug01-upload">
-                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
-                            <p>Drag and drop shapefiles here or click to browse</p>
-                            <input type="file" multiple accept=".shp,.dbf,.shx,.prj,.cpg,.sbn,.sbx,.fbn,.fbx,.ain,.aih,.ixs,.mxs,.atx,.shp.xml,.lyr" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label">Available Shapefiles:</label>
+                            <select class="form-select" id="ug01-file-select" multiple size="6">
+                                <option disabled>No files loaded yet</option>
+                            </select>
+                        </div>
+                        <div class="text-center mb-3">
+                            <button class="btn btn-outline-warning btn-sm" onclick="addSelectedFiles('UG01')">
+                                <i class="fas fa-plus"></i> Add Selected Files
+                            </button>
                         </div>
                         <div class="selected-files mt-3" id="ug01-files"></div>
                     </div>
@@ -364,6 +428,8 @@
         let currentStep = 1;
         let studyAreaName = '';
         let excelData = null;
+        let selectedDirectory = null;
+        let availableDataFiles = {};
         let selectedFiles = {
             AG01: [],
             AG02: [],
@@ -393,8 +459,24 @@
             // Skip setup button
             document.getElementById('skip-setup').addEventListener('click', function() {
                 document.getElementById('setup-section').style.display = 'none';
-                document.getElementById('config-section').classList.add('active');
-                updateStepIndicator(1);
+                document.getElementById('directory-section').classList.add('active');
+                updateStepIndicator(2);
+            });
+
+            // Directory selection
+            document.getElementById('select-directory-btn').addEventListener('click', function() {
+                document.getElementById('directory-picker').click();
+            });
+
+            document.getElementById('directory-picker').addEventListener('change', handleDirectorySelection);
+
+            // Next to config
+            document.getElementById('next-to-config').addEventListener('click', function() {
+                if (!selectedDirectory) {
+                    alert('Please select your LUCIS directory first.');
+                    return;
+                }
+                navigateToSection('directory-section', 'config-section', 3);
             });
 
             // Download sample Excel template
@@ -407,13 +489,13 @@
                     alert('Please enter a study area name.');
                     return;
                 }
-                navigateToSection('config-section', 'agriculture-section', 2);
+                navigateToSection('config-section', 'agriculture-section', 4);
             });
 
-            document.getElementById('next-to-ag02').addEventListener('click', () => navigateToSection('agriculture-section', 'ag02-section', 3));
-            document.getElementById('next-to-ag03').addEventListener('click', () => navigateToSection('ag02-section', 'ag03-section', 4));
-            document.getElementById('next-to-conservation').addEventListener('click', () => navigateToSection('ag03-section', 'conservation-section', 5));
-            document.getElementById('next-to-urban').addEventListener('click', () => navigateToSection('conservation-section', 'urban-section', 6));
+            document.getElementById('next-to-ag02').addEventListener('click', () => navigateToSection('agriculture-section', 'ag02-section', 5));
+            document.getElementById('next-to-ag03').addEventListener('click', () => navigateToSection('ag02-section', 'ag03-section', 6));
+            document.getElementById('next-to-conservation').addEventListener('click', () => navigateToSection('ag03-section', 'conservation-section', 7));
+            document.getElementById('next-to-urban').addEventListener('click', () => navigateToSection('conservation-section', 'urban-section', 8));
 
             // Skip buttons
             document.querySelectorAll('[id^="skip-"]').forEach(btn => {
@@ -433,16 +515,11 @@
             // Excel file upload
             document.getElementById('excel-file').addEventListener('change', handleExcelUpload);
 
-            // File upload areas
-            setupFileUpload('ag01-upload', 'AG01');
-            setupFileUpload('ag02-upload', 'AG02');
-            setupFileUpload('ag03-upload', 'AG03');
-            setupFileUpload('cg01-upload', 'CG01');
-            setupFileUpload('ug01-upload', 'UG01');
+            // File selection is now handled through directory picker
 
             // Process data button
             document.getElementById('process-data').addEventListener('click', function() {
-                navigateToSection('urban-section', 'processing-section', 6);
+                navigateToSection('urban-section', 'processing-section', 9);
                 startProcessing();
             });
         }
@@ -454,7 +531,7 @@
         }
 
         function updateStepIndicator(activeStep) {
-            for (let i = 1; i <= 6; i++) {
+            for (let i = 1; i <= 7; i++) {
                 const stepEl = document.getElementById(`step-${i}`);
                 stepEl.classList.remove('active', 'completed');
                 if (i < activeStep) {
@@ -482,38 +559,7 @@
             reader.readAsArrayBuffer(file);
         }
 
-        function setupFileUpload(uploadAreaId, theme) {
-            const uploadArea = document.getElementById(uploadAreaId);
-            const fileInput = uploadArea.querySelector('input[type="file"]');
-            const filesContainer = document.getElementById(`${theme.toLowerCase()}-files`);
 
-            // Click to browse
-            uploadArea.addEventListener('click', () => fileInput.click());
-
-            // File input change
-            fileInput.addEventListener('change', (e) => handleFileSelection(e.target.files, theme, filesContainer));
-
-            // Drag and drop
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('dragover');
-            });
-
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('dragover');
-            });
-
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-                handleFileSelection(e.dataTransfer.files, theme, filesContainer);
-            });
-        }
-
-        function handleFileSelection(files, theme, container) {
-            selectedFiles[theme] = Array.from(files);
-            updateFileDisplay(theme, container);
-        }
 
         function updateFileDisplay(theme, container) {
             container.innerHTML = '';
@@ -534,6 +580,38 @@
             selectedFiles[theme].splice(index, 1);
             const container = document.getElementById(`${theme.toLowerCase()}-files`);
             updateFileDisplay(theme, container);
+        }
+
+        function addSelectedFiles(theme) {
+            const selectElement = document.getElementById(`${theme.toLowerCase()}-file-select`);
+            const selectedOptions = Array.from(selectElement.selectedOptions);
+
+            selectedOptions.forEach(option => {
+                const fileName = option.value;
+                const fileGroup = availableDataFiles[fileName];
+                if (fileGroup && !selectedFiles[theme].some(f => f.name.startsWith(fileName))) {
+                    selectedFiles[theme].push(...fileGroup);
+                }
+            });
+
+            const container = document.getElementById(`${theme.toLowerCase()}-files`);
+            updateFileDisplay(theme, container);
+        }
+
+        function populateFileDropdowns() {
+            const fileNames = Object.keys(availableDataFiles).sort();
+
+            ['ag01', 'ag02', 'ag03', 'cg01', 'ug01'].forEach(theme => {
+                const selectElement = document.getElementById(`${theme}-file-select`);
+                selectElement.innerHTML = '<option disabled>Select files...</option>';
+
+                fileNames.forEach(fileName => {
+                    const option = document.createElement('option');
+                    option.value = fileName;
+                    option.textContent = `${fileName}.shp`;
+                    selectElement.appendChild(option);
+                });
+            });
         }
 
         async function startProcessing() {
@@ -676,6 +754,75 @@ print(f"Unique SuitMod values: {df['SuitMod'].unique()}")
                 console.error('Python processing error:', error);
                 throw new Error('Failed to prepare data for processing: ' + error.message);
             }
+        }
+
+        function handleDirectorySelection(event) {
+            const files = Array.from(event.target.files);
+            if (files.length === 0) return;
+
+            // Find the LUCIS directory and then locate the Data folder
+            const filePaths = files.map(file => file.webkitRelativePath);
+            const lucisPath = filePaths.find(path => path.includes('/LUCIS/'));
+
+            if (!lucisPath) {
+                alert('Please select a directory that contains the LUCIS folder.');
+                return;
+            }
+
+            // Extract the base directory path (everything before /LUCIS/)
+            const basePath = lucisPath.split('/LUCIS/')[0];
+            selectedDirectory = basePath;
+
+            // Display selected directory
+            document.getElementById('directory-path').textContent = basePath;
+            document.getElementById('selected-directory-display').style.display = 'block';
+
+            // Filter files that are in the Data folder
+            const dataFiles = files.filter(file => {
+                const relativePath = file.webkitRelativePath;
+                return relativePath.includes('/LUCIS/Data/') &&
+                       (relativePath.endsWith('.shp') ||
+                        relativePath.endsWith('.dbf') ||
+                        relativePath.endsWith('.shx') ||
+                        relativePath.endsWith('.prj'));
+            });
+
+            // Group shapefiles by base name (remove extensions)
+            const shapefileGroups = {};
+            dataFiles.forEach(file => {
+                const fileName = file.name;
+                const baseName = fileName.substring(0, fileName.lastIndexOf('.'));
+                if (!shapefileGroups[baseName]) {
+                    shapefileGroups[baseName] = [];
+                }
+                shapefileGroups[baseName].push(file);
+            });
+
+            // Display found files
+            const filesList = document.getElementById('data-files-list');
+            filesList.innerHTML = '';
+
+            if (Object.keys(shapefileGroups).length === 0) {
+                filesList.innerHTML = '<p class="text-muted">No shapefiles found in the Data folder. Please ensure your shapefiles are placed in LUCIS/Data/</p>';
+            } else {
+                Object.keys(shapefileGroups).sort().forEach(baseName => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <span><i class="fas fa-file"></i> ${baseName}.shp (and associated files)</span>
+                        <small class="text-muted">${shapefileGroups[baseName].length} files</small>
+                    `;
+                    filesList.appendChild(fileItem);
+                });
+            }
+
+            document.getElementById('directory-files').style.display = 'block';
+
+            // Store the available files globally for later use
+            availableDataFiles = shapefileGroups;
+
+            // Populate the dropdowns in all theme sections
+            populateFileDropdowns();
         }
 
         function downloadSampleExcel() {
