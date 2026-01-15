@@ -128,10 +128,13 @@
                     <div class="alert alert-info">
                         <strong>📁 LUCIS Folder Contents:</strong> Data templates, processing scripts, and documentation.
                     </div>
+                    <div class="alert alert-warning">
+                        <strong>💡 Tip:</strong> Right-click the download button and choose "Save link as..." to choose where to save the file on your computer.
+                    </div>
                 </div>
                 <div class="text-center">
-                    <a href="https://github.com/jonobenjamin/LUCIS/archive/refs/heads/main.zip" class="btn btn-success btn-custom btn-lg me-3" download>
-                        <i class="fas fa-download"></i> Download LUCIS Folder
+                    <a href="LUCIS_Resources.zip" class="btn btn-success btn-custom btn-lg me-3" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-download"></i> Download LUCIS Resources
                     </a>
                     <button id="skip-setup" class="btn btn-primary btn-custom btn-lg">
                         <i class="fas fa-arrow-right"></i> Next (Already Downloaded)
@@ -141,7 +144,7 @@
         </div>
 
         <!-- Directory Selection -->
-        <div id="directory-section" class="card theme-section">
+        <div id="directory-section" class="card theme-section" style="display: none;">
             <div class="card-body">
                 <h3 class="card-title text-center mb-4">
                     <i class="fas fa-folder-open"></i> Select Your LUCIS Directory
@@ -184,7 +187,7 @@
         </div>
 
         <!-- Study Area Configuration -->
-        <div id="config-section" class="card theme-section">
+        <div id="config-section" class="card theme-section" style="display: none;">
             <div class="card-body">
                 <h3 class="card-title text-center mb-4">
                     <i class="fas fa-map"></i> Study Area Configuration
@@ -220,7 +223,7 @@
         </div>
 
         <!-- Agriculture Theme Selection -->
-        <div id="agriculture-section" class="card theme-section">
+        <div id="agriculture-section" class="card theme-section" style="display: none;">
             <div class="card-body theme-card">
                 <h3 class="card-title text-center mb-4">
                     <i class="fas fa-tractor"></i> Agriculture Suitability Themes
@@ -260,7 +263,7 @@
         </div>
 
         <!-- AG02: Livestock -->
-        <div id="ag02-section" class="card theme-section">
+        <div id="ag02-section" class="card theme-section" style="display: none;">
             <div class="card-body theme-card">
                 <h3 class="card-title text-center mb-4">
                     <i class="fas fa-cow"></i> AG02: Livestock Suitability
@@ -294,7 +297,7 @@
         </div>
 
         <!-- AG03: Gardens -->
-        <div id="ag03-section" class="card theme-section">
+        <div id="ag03-section" class="card theme-section" style="display: none;">
             <div class="card-body theme-card">
                 <h3 class="card-title text-center mb-4">
                     <i class="fas fa-leaf"></i> AG03: Gardens Suitability
@@ -328,7 +331,7 @@
         </div>
 
         <!-- Conservation Theme Selection -->
-        <div id="conservation-section" class="card theme-section">
+        <div id="conservation-section" class="card theme-section" style="display: none;">
             <div class="card-body" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
                 <h3 class="card-title text-center mb-4">
                     <i class="fas fa-tree"></i> Conservation Theme
@@ -365,7 +368,7 @@
         </div>
 
         <!-- Urban Theme Selection -->
-        <div id="urban-section" class="card theme-section">
+        <div id="urban-section" class="card theme-section" style="display: none;">
             <div class="card-body" style="background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%); color: white;">
                 <h3 class="card-title text-center mb-4">
                     <i class="fas fa-city"></i> Urban Theme
@@ -405,7 +408,7 @@
         </div>
 
         <!-- Processing Status -->
-        <div id="processing-section" class="card theme-section">
+        <div id="processing-section" class="card theme-section" style="display: none;">
             <div class="card-body">
                 <h3 class="card-title text-center mb-4">
                     <i class="fas fa-cog fa-spin"></i> Processing Data
