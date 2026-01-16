@@ -79,13 +79,13 @@ class LUCISApp {
 
                 // Check for required subfolders
                 try {
-                    const dataHandle = await directoryHandle.getDirectoryHandle('Data');
+                    const dataHandle = await directoryHandle.getDirectoryHandle('All Data');
                     const rankedTifsHandle = await directoryHandle.getDirectoryHandle('Ranked Tifs');
                     hasValidStructure = true;
 
-                    // Look for study area folders (any folder that's not Data or Ranked Tifs)
+                    // Look for study area folders (any folder that's not All Data or Ranked Tifs)
                     for await (const [name, handle] of directoryHandle.entries()) {
-                        if (handle.kind === 'directory' && name !== 'Data' && name !== 'Ranked Tifs') {
+                        if (handle.kind === 'directory' && name !== 'All Data' && name !== 'Ranked Tifs') {
                             subfolders.push(name);
                         }
                     }
@@ -98,7 +98,7 @@ class LUCISApp {
 
                 // Check structure from files
                 const fileNames = directoryHandle.files.map(f => f.webkitRelativePath);
-                hasValidStructure = fileNames.some(path => path.includes('/Data/')) &&
+                hasValidStructure = fileNames.some(path => path.includes('/All Data/')) &&
                                   fileNames.some(path => path.includes('/Ranked Tifs/'));
 
                 // Extract study area folders
@@ -107,7 +107,7 @@ class LUCISApp {
                     const parts = path.split('/');
                     if (parts.length > 1) {
                         const folder = parts[1];
-                        if (folder !== 'Data' && folder !== 'Ranked Tifs' && folder !== '') {
+                        if (folder !== 'All Data' && folder !== 'Ranked Tifs' && folder !== '') {
                             folders.add(folder);
                         }
                     }
