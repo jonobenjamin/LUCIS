@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUCIS Folder Manager</title>
+    <title>Download LUCIS Folder</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,53 +17,81 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
         }
         h1 {
             color: #333;
+            text-align: center;
             margin-bottom: 20px;
         }
         .description {
             color: #666;
             margin-bottom: 30px;
             line-height: 1.6;
+            text-align: center;
         }
-        .action-button {
-            background-color: #28a745;
-            color: white;
-            padding: 15px 30px;
-            border: none;
+        .file-list {
+            margin: 20px 0;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
             border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 10px;
-            transition: background-color 0.3s;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
         }
-        .action-button:hover {
-            background-color: #218838;
+        .file-name {
+            font-weight: bold;
+            color: #333;
+        }
+        .file-size {
+            color: #666;
+            font-size: 14px;
         }
         .download-button {
             background-color: #007bff;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .download-button:hover {
+            background-color: #0056b3;
+        }
+        .bulk-download {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        .bulk-button {
+            background-color: #28a745;
             color: white;
             padding: 15px 30px;
             text-decoration: none;
             border-radius: 5px;
             font-size: 16px;
-            transition: background-color 0.3s;
+            font-weight: bold;
             display: inline-block;
-            margin: 10px;
+            transition: background-color 0.3s;
         }
-        .download-button:hover {
-            background-color: #0056b3;
+        .bulk-button:hover {
+            background-color: #218838;
         }
         .info {
             margin-top: 20px;
             padding: 15px;
-            background-color: #e9ecef;
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
             border-radius: 5px;
-            color: #495057;
+            color: #0c5460;
         }
-        .warning {
+        .instructions {
             margin-top: 20px;
             padding: 15px;
             background-color: #fff3cd;
@@ -71,63 +99,50 @@
             border-radius: 5px;
             color: #856404;
         }
-        .file-input {
-            margin: 20px 0;
-            padding: 10px;
-            border: 2px dashed #007bff;
-            border-radius: 5px;
-            background-color: #f8f9fa;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>LUCIS Folder Manager</h1>
+        <h1>📁 LUCIS Folder Download</h1>
         <p class="description">
-            Manage and download your LUCIS folder. Choose from the options below to copy or download the LUCIS folder to different locations on your computer.
+            Download individual files from the LUCIS folder. Your browser will prompt you to choose where to save each file on your computer.
         </p>
 
-        <div class="warning">
-            <strong>Browser Limitation:</strong> For security reasons, web browsers cannot directly access your local file system or copy folders to arbitrary locations. Here are your options:
+        <div class="file-list">
+            <h3>Available Files:</h3>
+
+            <div class="file-item">
+                <div>
+                    <span class="file-name">📊 Data.xlsx</span>
+                    <span class="file-size">(Excel Spreadsheet)</span>
+                </div>
+                <a href="https://raw.githubusercontent.com/jonobenjamin/LUCIS/main/LUCIS/Data.xlsx" class="download-button" download>
+                    Download
+                </a>
+            </div>
         </div>
 
-        <h3>Option 1: Download from GitHub Repository</h3>
-        <p>Download the entire repository (which contains your LUCIS folder):</p>
-        <a href="https://github.com/jonobenjamin/LUCIS/archive/main.zip" class="download-button" download>
-            📦 Download Full Repository
-        </a>
-
-        <h3>Option 2: Manual Copy</h3>
-        <p>To copy just the LUCIS folder to another location:</p>
-        <div class="info">
-            1. Open your file explorer/finder<br>
-            2. Navigate to: <code>/Users/jonathanbenjamin/Desktop/LUCIS_WEB_APP</code><br>
-            3. Copy the LUCIS folder<br>
-            4. Paste it to your desired location
+        <div class="bulk-download">
+            <h3>Download All Files at Once</h3>
+            <p>To download the entire LUCIS folder as a ZIP file:</p>
+            <a href="https://github.com/jonobenjamin/LUCIS/archive/main.zip" class="bulk-button" download>
+                📦 Download LUCIS Folder (ZIP)
+            </a>
+            <p><small>Note: This downloads the entire repository. Extract the ZIP and look for the LUCIS folder inside.</small></p>
         </div>
 
-        <h3>Option 3: Create ZIP of LUCIS Folder</h3>
-        <p>Use the button below to create a ZIP file of your LUCIS folder:</p>
-        <button class="action-button" onclick="createZip()">
-            📁 Create LUCIS ZIP
-        </button>
+        <div class="instructions">
+            <strong>How to download to a specific location:</strong><br>
+            1. Click any download link above<br>
+            2. Your browser will show a "Save As" dialog<br>
+            3. Choose exactly where you want to save the file on your computer<br>
+            4. Click "Save"
+        </div>
 
         <div class="info">
-            <strong>Note:</strong> The ZIP creation requires modern browser APIs and may not work in all browsers.
-            Your browser will prompt you to choose where to save the ZIP file.
+            <strong>Browser Download Location:</strong> Modern browsers allow you to choose the download location each time.
+            Look for a "Save As" or "Download" button in your browser's download prompt.
         </div>
     </div>
-
-    <script>
-        async function createZip() {
-            try {
-                // This would require additional setup with a backend service
-                // or a more complex client-side solution
-                alert('ZIP creation requires additional setup. Please use Option 1 or 2 for now.');
-            } catch (error) {
-                alert('Error creating ZIP: ' + error.message);
-            }
-        }
-    </script>
 </body>
 </html>
