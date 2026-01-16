@@ -3,146 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download LUCIS Folder</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .description {
-            color: #666;
-            margin-bottom: 30px;
-            line-height: 1.6;
-            text-align: center;
-        }
-        .file-list {
-            margin: 20px 0;
-        }
-        .file-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            background-color: #f8f9fa;
-        }
-        .file-name {
-            font-weight: bold;
-            color: #333;
-        }
-        .file-size {
-            color: #666;
-            font-size: 14px;
-        }
-        .download-button {
-            background-color: #007bff;
-            color: white;
-            padding: 8px 16px;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-        .download-button:hover {
-            background-color: #0056b3;
-        }
-        .bulk-download {
-            text-align: center;
-            margin: 30px 0;
-            padding: 20px;
-            background-color: #e9ecef;
-            border-radius: 5px;
-        }
-        .bulk-button {
-            background-color: #28a745;
-            color: white;
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            display: inline-block;
-            transition: background-color 0.3s;
-        }
-        .bulk-button:hover {
-            background-color: #218838;
-        }
-        .info {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #d1ecf1;
-            border: 1px solid #bee5eb;
-            border-radius: 5px;
-            color: #0c5460;
-        }
-        .instructions {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 5px;
-            color: #856404;
-        }
-    </style>
+    <title>LUCIS Model Runner</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>📁 LUCIS Folder Download</h1>
-        <p class="description">
-            Download individual files from the LUCIS folder. Your browser will prompt you to choose where to save each file on your computer.
-        </p>
+        <header>
+            <h1>LUCIS Land Use Conflict Identification Strategy</h1>
+            <p>A spatial planning tool for land use conflict analysis</p>
+        </header>
 
-        <div class="file-list">
-            <h3>Available Files:</h3>
+        <section class="instructions">
+            <h2>Setup Instructions</h2>
+            <div class="instruction-content">
+                <p><strong>Step 1:</strong> On your local computer, create a folder called <code>LUCIS</code> in your desired location.</p>
 
-            <div class="file-item">
-                <div>
-                    <span class="file-name">📊 Data.xlsx</span>
-                    <span class="file-size">(Excel Spreadsheet)</span>
-                </div>
-                <a href="https://raw.githubusercontent.com/jonobenjamin/LUCIS/main/LUCIS/Data.xlsx" class="download-button" download>
-                    Download
-                </a>
+                <p><strong>Step 2:</strong> Within the LUCIS folder, create the following subfolders:</p>
+                <ul>
+                    <li><code>Data</code> - for input shapefiles and Excel data</li>
+                    <li><code>Ranked Tifs</code> - for processed raster outputs</li>
+                    <li><code>[Study Area Name]</code> - replace with your study area name (e.g., Maun, Seronga, KAZA)</li>
+                </ul>
+
+                <p><strong>Step 3:</strong> Place your data files in the appropriate folders:</p>
+                <ul>
+                    <li>Excel data file (<code>Data.xlsx</code>) in the <code>Data</code> folder</li>
+                    <li>Shapefiles and other geospatial data in subfolders within <code>Data</code></li>
+                    <li>Study area boundary shapefile in the study area folder</li>
+                </ul>
+
+                <p><strong>Step 4:</strong> Click the button below to select your LUCIS base directory.</p>
             </div>
-        </div>
+        </section>
 
-        <div class="bulk-download">
-            <h3>Download All Files at Once</h3>
-            <p>To download the entire LUCIS folder as a ZIP file:</p>
-            <a href="https://github.com/jonobenjamin/LUCIS/archive/main.zip" class="bulk-button" download>
-                📦 Download LUCIS Folder (ZIP)
-            </a>
-            <p><small>Note: This downloads the entire repository. Extract the ZIP and look for the LUCIS folder inside.</small></p>
-        </div>
+        <section class="directory-selection">
+            <button id="selectDirectory" class="select-btn">Select LUCIS Base Directory</button>
+            <div id="selectedPath" class="selected-path"></div>
+            <div id="status" class="status-message"></div>
+        </section>
 
-        <div class="instructions">
-            <strong>How to download to a specific location:</strong><br>
-            1. Click any download link above<br>
-            2. Your browser will show a "Save As" dialog<br>
-            3. Choose exactly where you want to save the file on your computer<br>
-            4. Click "Save"
-        </div>
-
-        <div class="info">
-            <strong>Browser Download Location:</strong> Modern browsers allow you to choose the download location each time.
-            Look for a "Save As" or "Download" button in your browser's download prompt.
-        </div>
+        <section class="actions">
+            <h3>Available Actions</h3>
+            <div class="action-buttons">
+                <button id="runModel" class="action-btn" disabled>Run LUCIS Model</button>
+                <button id="viewResults" class="action-btn" disabled>View Results</button>
+                <button id="exportConfig" class="action-btn" disabled>Export Configuration</button>
+            </div>
+        </section>
     </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
